@@ -62,6 +62,13 @@ def read_bytes(wbytes):
 def read_rkg(rkgfiles):
     # filters out any non-.rgk file
     rkgfiles = list(filter(isRKG,rkgfiles))
+    # check if there are files
+    if len(rkgfiles) < 1:
+        os.rmdir("files/temp")
+        input("Restart the script and insert some files.")
+        quit()
+    else:
+        pass
     # num for the file name
     num = 1
     for x in rkgfiles:
@@ -74,9 +81,10 @@ def read_rkg(rkgfiles):
         # calls Mii2Studio
         output(f"files/temp/{num}.miigx",num)
         num += 1
-    
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
-    os.rename(f"files/temp/{num}.miigx",f"files/temp/{num}.miigx")
+    print(os.listdir("files/"))
+    print(os.listdir("files/temp"))
+    os.rename(f"files/temp/{num}.miigx",f"output/miigx/{num}.miigx")
     # remove temp dir
     os.rmdir("files/temp")
     sleep(10)
@@ -86,12 +94,12 @@ def read_rkg(rkgfiles):
 
 match first_input:
     case "y" :
-        second_input = input("Press enter when you put the files in the file folder.")
+        second_input = input("Press enter when you put the files in the file folder...  ")
         # reads the files in the files folder
-        rkgfiles = os.listdir("files")
+        rkgfiles = os.listdir("files/")
         read_rkg(rkgfiles)
     case "p" :
-        print("Paste now.\nPut commas between Miis if you have more than one.")
+        print("Paste now.\nPut commas between Miis if you have more than one.\n >> ")
         inp = input().strip("\n").strip(" ").strip("")
         read_bytes(inp)
         quit()

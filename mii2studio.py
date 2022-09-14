@@ -3,6 +3,7 @@ from encodings import utf_8
 from os import remove
 from requests import get
 from struct import pack
+from gen1_wii import CoreDataWii
 
 def output(input_file,num:int):
     input_type = "wii"
@@ -10,45 +11,18 @@ def output(input_file,num:int):
     output_f = "output/output.txt"
     out = "<><><><><><><><><><><><><><><><><><><><>"
 
-    if input_type == "wii":
-        from gen1_wii import CoreDataWii
-        try:
-            if len(input_file.replace("-", "")) <= 12 and "." not in input_file:
-
-                num = int(format(int(input_file.replace("-", "")), '032b').zfill(40)[8:], 2) # the cmoc entry numbr is scrambled using a lot of bitwise operations
-                num ^= 0x20070419
-                num ^= (num >> 0x1D) ^ (num >> 0x11) ^ (num >> 0x17)
-                num ^= (num & 0xF0F0F0F) << 4
-                num ^= ((num << 0x1E) ^ (num << 0x12) ^ (num << 0x18)) & 0xFFFFFFFF
-
-                query = get("https://miicontestp.wii.rc24.xyz/cgi-bin/search.cgi?entryno=" + str(num)).content
-
-                if len(query) != 32: # 32 = empty response
-                    with open("qr.cfsd", "wb") as f:
-                        f.write(query[56:130]) # cut the Mii out of the file
-                else:
-                    pass
-
-                input_file = "qr.cfsd"
-            else:
-                input_file = input_file
-        except ValueError:
-            input_file = input_file
-        
-        orig_mii = CoreDataWii.from_file(input_file)
+    orig_mii = CoreDataWii.from_file(input_file)
 
     def u8(data):
         return pack(">B", data)
 
-    if input_type != "studio":
+    out += "\nMii Name: " + orig_mii.mii_name
         
-        out += "\nMii Name: " + orig_mii.mii_name
-        
-        if "switch" not in input_type:
-            if orig_mii.creator_name != "\0" * 10:
-                out += "\nCreator Name: " + orig_mii.creator_name
-            if orig_mii.birth_month != 0 and orig_mii.birth_day != 0:
-                pass
+    if "switch" not in input_type:
+        if orig_mii.creator_name != "\0" * 10:
+            out += "\nCreator Name: " + orig_mii.creator_name
+        if orig_mii.birth_month != 0 and orig_mii.birth_day != 0:
+            pass
 
         favorite_colors = {
             0: "Red",
@@ -100,9 +74,9 @@ def output(input_file,num:int):
             11: 11
         }
 
-        # ue generate the Mii Studio file by reading each Mii format from the Kaitai files.
-        # unlike consoles which store Mii data in an odd number of bits,
-        # all the Mii data for a Mii Studio Mii is stored as unsigned 8-bit integers. makes it easier.
+    # we generate the Mii Studio file by reading each Mii format from the Kaitai files.
+    # unlike consoles which store Mii data in an odd number of bits,
+    # all the Mii data for a Mii Studio Mii is stored as unsigned 8-bit integers. makes it easier.
 
         if "switch" not in input_type:
             if orig_mii.facial_hair_color == 0:
