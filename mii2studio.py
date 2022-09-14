@@ -1,4 +1,5 @@
 from binascii import hexlify
+from codecs import ascii_decode, utf_16_be_decode
 from encodings import utf_8
 from os import remove
 from requests import get
@@ -217,13 +218,6 @@ def output(input_file,num:int):
 
         out += f"\nMii Render URLs: {url}&type=face&width=512\nMii Studio code: {mii_data_bytes}"
 
-        remove(output_f)
-        with open(output_f,"a") as f:
-            print(out)
-            f.write(out)
-        
-        #print(f"URL: {url}")
-    
-    remove(vecchiofile)
+        remove(vecchiofile)
 
-    print(f"Info written to {output_f}")
+        return out

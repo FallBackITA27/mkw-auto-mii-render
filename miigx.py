@@ -30,6 +30,13 @@ try:
     os.mkdir("output/miigx")
 except:
     pass
+try:
+    with open("output/output.txt","w") as f:
+        pass
+except:
+    os.remove("output/output.txt")
+    with open("output/output.txt","w") as f:
+        pass
 
 # chose input
 first_input = input("Y for Normal \"Read Files from Folder\" mode\nP for \"Paste bytes\" mode\nQ for quit\n >> ").lower()
@@ -70,17 +77,32 @@ def read_rkg(rkgfiles):
     else:
         pass
     # num for the file name
-    num = 1
+    num = 0
+    final_out = ""
     for x in rkgfiles:
         # opens the rkg and writes the miidata in the temp folder
+        num += 1
         with open(f"files/{x}","rb") as rf, open(f"files/temp/{num}.miigx","wb") as wf:
             # 0xC3 Offset | 0x4A Length | Blocks 0xC3 to 0x85
             rf.seek(60)
             rkgd = rf.read(74)
             wf.write(rkgd)
         # calls Mii2Studio
-        output(f"files/temp/{num}.miigx",num)
-        num += 1
+        out = output(f"files/temp/{num}.miigx",num)
+        final_out += f"\n{out}\nRKG: {x}"
+    with open("output/output.txt","w") as f:
+        print(final_out)
+        print(ord(final_out[457]))
+        print(ord(final_out[458]))
+        print(ord(final_out[459]))
+        print(ord(final_out[460]))
+        print(ord(final_out[461]))
+        print(final_out[457])
+        print(final_out[458])
+        print(final_out[459])
+        print(final_out[460])
+        print(final_out[461])
+        f.write(final_out)
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
     print(os.listdir("files/"))
     print(os.listdir("files/temp"))
@@ -102,5 +124,4 @@ match first_input:
         print("Paste now.\nPut commas between Miis if you have more than one.\n >> ")
         inp = input().strip("\n").strip(" ").strip("")
         read_bytes(inp)
-        quit()
     case _ : quit()
