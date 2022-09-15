@@ -20,17 +20,17 @@ try:
 except:
     pass
 try:
-    os.mkdir("files/temp")
-except:
-    pass
-try:
     os.mkdir("output")
 except:
     pass
 try:
     os.mkdir("output/miigx")
 except:
-    pass
+    temporary_to_remove_folder = os.listdir("output/miigx")
+    for x in temporary_to_remove_folder:
+        os.remove(x)
+    os.rmdir("output/miigx")
+    os.mkdir("output/miigx")
 try:
     with open("output/output.txt","w") as f:
         pass
@@ -72,36 +72,31 @@ def read_rkg(rkgfiles):
     rkgfiles = list(filter(isRKG,rkgfiles))
     # check if there are files
     if len(rkgfiles) < 1:
-        os.rmdir("files/temp")
+        os.rmdir("output/miigx")
         input("Restart the script and insert some files.")
         quit()
     else:
         pass
     # num for the file name
     num = 0
-    final_out = b"\x00\x00"
     for x in rkgfiles:
         # opens the rkg and writes the miidata in the temp folder
         num += 1
-        with open(f"files/{x}","rb") as rf, open(f"files/temp/{num}.miigx","wb") as wf:
+        with open(f"files/{x}","rb") as rf, open(f"output/miigx/{num}.miigx","wb") as wf:
             # 0xC3 Offset | 0x4A Length | Blocks 0xC3 to 0x85
+            final_out = b"\x00\x00"
             rf.seek(60)
             rkgd = rf.read(74)
             wf.write(rkgd)
         # calls Mii2Studio
         final_out = b"\x00\x0A"
-        final_out = output(f"files/temp/{num}.miigx",num)
+        final_out = output(f"output/miigx/{num}.miigx",num)
         final_out += b"\x00\x0A"
         final_out += f"RKG: {x}".encode("utf-16be")
-    with open("output/output.txt","w") as f:
-        final_out = codecs.utf_16_be_decode(final_out)
-        f.write(final_out[0])
+        with open("output/output.txt","a") as f:
+            final_out = codecs.utf_16_be_decode(final_out)
+            f.write(final_out[0])
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
-    print(os.listdir("files/"))
-    print(os.listdir("files/temp"))
-    os.rename(f"files/temp/{num}.miigx",f"output/miigx/{num}.miigx")
-    # remove temp dir
-    os.rmdir("files/temp")
     sleep(10)
     quit()
 
