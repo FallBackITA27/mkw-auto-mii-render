@@ -24,7 +24,7 @@ try:
 except:
     temporary_to_remove_folder = os.listdir("output/miigx")
     for x in temporary_to_remove_folder:
-        os.remove(x)
+        os.remove(f"output/miigx/{x}")
     os.rmdir("output/miigx")
     os.mkdir("output/miigx")
 try:
@@ -90,8 +90,8 @@ def read_rkg(rkgfiles):
         final_out += b"\x00\x0A"
         final_out += f"RKG: {x}".encode("utf-16be")
         with open("output/output.txt","a") as f:
-            final_out = codecs.utf_16_be_decode(final_out)
-            f.write(final_out[0])
+            print(codecs.utf_16_be_decode(final_out)[0])
+            f.write(codecs.utf_16_be_decode(final_out)[0])
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
     sleep(10)
     quit()
