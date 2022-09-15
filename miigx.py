@@ -1,6 +1,7 @@
 import os
 from mii2studio import output
 from time import sleep
+import codecs
 
 # a lot of code comes from Mii2Studio
 # https://github.com/HEYimHeroic/mii2studio/tree/74014fe199a358e809b2af2022a6eafaa7ec9931
@@ -78,7 +79,7 @@ def read_rkg(rkgfiles):
         pass
     # num for the file name
     num = 0
-    final_out = ""
+    final_out = b"\x00\x00"
     for x in rkgfiles:
         # opens the rkg and writes the miidata in the temp folder
         num += 1
@@ -88,11 +89,13 @@ def read_rkg(rkgfiles):
             rkgd = rf.read(74)
             wf.write(rkgd)
         # calls Mii2Studio
-        out = output(f"files/temp/{num}.miigx",num)
-        final_out += f"\n{out}\nRKG: {x}"
-    with open("output/output.txt","a") as f:
-        print(final_out)
-        f.write(final_out)
+        final_out = b"\x00\x0A"
+        final_out = output(f"files/temp/{num}.miigx",num)
+        final_out += b"\x00\x0A"
+        final_out += f"RKG: {x}".encode("utf-16be")
+    with open("output/output.txt","w") as f:
+        final_out = codecs.utf_16_be_decode(final_out)
+        f.write(final_out[0])
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
     print(os.listdir("files/"))
     print(os.listdir("files/temp"))

@@ -10,18 +10,22 @@ def output(input_file,num:int):
     input_type = "wii"
     vecchiofile = "a"
     output_f = "output/output.txt"
-    out = "<><><><><><><><><><><><><><><><><><><><>"
+    out = "<><><><><><><><><><><><><><><><><><><><>".encode("utf-16be")
 
     orig_mii = CoreDataWii.from_file(input_file)
 
     def u8(data):
         return pack(">B", data)
 
-    out += "\nMii Name: " + orig_mii.mii_name
+    out += b"\x00\x0A"
+    out += "Mii Name: ".encode("utf-16be")
+    out += orig_mii.mii_name.encode("utf-16be")
         
     if "switch" not in input_type:
         if orig_mii.creator_name != "\0" * 10:
-            out += "\nCreator Name: " + orig_mii.creator_name
+            out += b"\x00\x0A"
+            out += "Creator Name: ".encode("utf-16be")
+            out += orig_mii.creator_name.encode("utf-16be")
         if orig_mii.birth_month != 0 and orig_mii.birth_day != 0:
             pass
 
@@ -216,7 +220,10 @@ def output(input_file,num:int):
         
         url = "https://studio.mii.nintendo.com/miis/image.png?data=" + mii_data.decode("utf-8")
 
-        out += f"\nMii Render URLs: {url}&type=face&width=512\nMii Studio code: {mii_data_bytes}"
+        out += b"\x00\x0A"
+        out += f"Mii Render URLs: {url}&type=face&width=512".encode("utf-16be")
+        out += b"\x00\x0A"
+        out += f"Mii Studio code: {mii_data_bytes}".encode("utf-16be")
 
         remove(vecchiofile)
 
