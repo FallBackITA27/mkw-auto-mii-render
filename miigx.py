@@ -7,10 +7,6 @@ import codecs
 # https://github.com/HEYimHeroic/mii2studio/tree/74014fe199a358e809b2af2022a6eafaa7ec9931
 # It's a cool project; Check it out!
 
-def echo(x):
-    print(x)
-    return x
-
 # I have yet to finish it
 print("Please read the ReadMe first!")
 
