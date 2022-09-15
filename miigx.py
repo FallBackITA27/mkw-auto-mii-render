@@ -90,18 +90,8 @@ def read_rkg(rkgfiles):
         # calls Mii2Studio
         out = output(f"files/temp/{num}.miigx",num)
         final_out += f"\n{out}\nRKG: {x}"
-    with open("output/output.txt","w") as f:
+    with open("output/output.txt","a") as f:
         print(final_out)
-        print(ord(final_out[457]))
-        print(ord(final_out[458]))
-        print(ord(final_out[459]))
-        print(ord(final_out[460]))
-        print(ord(final_out[461]))
-        print(final_out[457])
-        print(final_out[458])
-        print(final_out[459])
-        print(final_out[460])
-        print(final_out[461])
         f.write(final_out)
     # moves the temp file to the completed folder; I wanna move this line on the Mii2Studio.py script and make the file name {mii_name}.miigx 
     print(os.listdir("files/"))
